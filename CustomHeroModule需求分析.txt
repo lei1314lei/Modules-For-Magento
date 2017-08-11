@@ -1,24 +1,49 @@
-����position��action
-1��save hero product��save category��
+影响position的action
+1：save hero product（save category）& remove from hero products set
       1.1 save hero sku
       1.2 generate position(hero positions,other products position)
       1.3 register index event
-2��save position ��through Merchandiser module save position page��
-3 : save relationship between product and category (save product)
+2：save position （through Merchandiser module save position page）
+3 : save relationship between product and category (save product)  &  delete product from category 
+          save:
+                  after save relationship,  save position(sum(products) in this category of this store+1) in to each store if there is no position in this store
+         delete:
+                  after delete product from category, delete all corresponding positions in all store
 
-ȷ��positionֵ����
-a,��һ�ι�����store category�ģ�positionΪ��store category��position�����ֵ+1
-b,�Ѿ�������store category�ģ�ָ��positionֱ�ӱ���
-c,�Ѿ�������store category�ģ����ұ�ָ��Ϊhero product��positionΪhero�ڴ�store category�е�orderֵ�����Ҹ���������hero product position
 
-test1��	save relationship������hero_1��category_1����
+（resource 级别，
+        product先与category关联，然后在特定的store save/update/delete/select position
+               1：在store 界别save/update/delete/select position
+               2：删除relationship between product and category， then  delete all corresponding positions in all store
+）
 
-	   case 1��
+确定position值规则：
+     是hero product的：position为hero product set中的order，
+     不是hero product的：
+            store category中有position的，重新按原来的position确定顺序得到order
+            store category中没有position的，则使用此store category中order（重新确定顺序之后的order）的最大值+1
+
+a,第一次关联到store category的，
+     通过save product的方式：position为此store category中position的最大值+1
+     通过hero product的方式 : position为hero在此store category中的order值，并且更新其他非hero product position
+b,已经关联到store category的，指定position直接保存
+c,已经关联到store category的，并且被指定为hero product，
+
+
+
+
+
+
+d,已经关联到store category的，
+
+test1：	save relationship（添加hero_1到category_1）：
+
+	   case 1：
 	   
-	   case 2��
-	        store_1��category_1��hero_1��Ʒ����������storeû�С�
+	   case 2：
+	        store_1的category_1有hero_1产品，但是其他store没有。
 	   case 3
-test2�� save relationship
-              case 1��
+test2： save relationship
+              case 1：
                    
-                  ��ĳ��store�� add product to category => save position;���е������Ʒ������store��position��Ϊ1
+                  在某个store， add product to category => save position;所有的这个产品在所有store的position都为1
