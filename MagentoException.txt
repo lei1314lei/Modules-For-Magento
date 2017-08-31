@@ -1,0 +1,50 @@
+
+When does the StoreException is throwed:
+
+   1,  Mage::isInstalled() && !Mage::app()->getStore()->getIsActive()      action::preDispatch()
+   2£¬unexceptedScopeType      Mage_Core_Model_App::_initCurrentStore($scopeCode, $scopeType)
+   3£¬getStoreFailed      Mage_Core_Model_App::getStore($id = null)
+
+When catch StoreException ?
+
+
+class Mage_Adminhtml_Model_System_Config_Backend_Design_Exception extends Mage_Adminhtml_Model_System_Config_Backend_Serialized_Array
+
+
+
+class Mage_Dataflow_Model_Convert_Exception extends Varien_Exception
+
+
+
+
+class Mage_Reports_Exception extends Zend_Exception 
+class Mage_Sales_Exception extends Zend_Exception 
+class Mage_SalesRule_Exception extends Zend_Exception 
+class Mage_Shipping_Exception extends Zend_Exception 
+class Mage_Backup_Exception extends Zend_Exception
+class Mage_Catalog_Exception extends Zend_Exception 
+class Mage_Checkout_Exception extends Zend_Exception 
+class Mage_Oauth_Exception extends Zend_Exception
+
+
+class Mage_Eav_Model_Entity_Attribute_Exception extends Exception
+class Mage_Core_Exception extends Exception
+class Mage_Api2_Exception extends Exception
+class Mage_Payment_Exception extends Exception
+class Mage_Core_Controller_Varien_Exception extends Exception
+
+
+class Mage_Adminhtml_Exception extends Mage_Core_Exception
+class Mage_Api_Exception extends Mage_Core_Exception
+class Mage_Core_Model_Session_Exception extends Mage_Core_Exception
+class Mage_Core_Model_Store_Exception extends Mage_Core_Exception
+class Mage_Cron_Exception extends Mage_Core_Exception
+class Mage_Customer_Exception extends Mage_Core_Exception 
+class Mage_Directory_Exception extends Mage_Core_Exception  
+class Mage_Eav_Exception extends Mage_Core_Exception 
+class Mage_Index_Exception extends Mage_Core_Exception
+class Mage_Payment_Model_Info_Exception extends Mage_Core_Exception
+class Mage_Paypal_Exception extends Mage_Core_Exception
+class Mage_Paypal_Model_Api_ProcessableException extends Mage_Core_Exception
+class Mage_Paypal_UnavailableException extends Mage_Core_Exception
+class Mage_Tax_Exception extends Mage_Core_Exception

@@ -1,0 +1,84 @@
+Builder创建module
+    1：create declear file(  创建module配置文件$moduleConfigFile)
+            add file into folder '/app/etc/modules'
+                  1.1  file 内容     $moduleFlag=$packageName.$moduleName
+                              $active                   :       $path="config/modules/$moduleFlag/active"
+                              $codePool              :       $path="config/modules/$moduleFlag/codePool"
+                              $depends               :        $path="config/modules/$moduleFlag/codePool"
+
+   2:create model code pool
+         set  model class
+   2:create  helper code pool
+         set helper class
+   3:create block code pool
+        set block class
+
+
+
+
+
+
+
+
+
+    2: create module folder in codePool  "app/code/$codePool/$packageName/$moduleName"
+    3:
+          $builder->setVersion()
+          $builder->setModelClass()
+          $builder->setHelperClass()
+          $builder->setBlockClass()
+
+
+
+
+
+
+//admint
+   tab
+
+
+//events
+          $builder->addObserver($area,$module,$events,$observerFlag,$observerType,$observerClass,$observerMethod)
+//index
+
+//cron
+
+
+
+
+
+addModel
+                   a:config model settings
+                   b:create model file
+           rewriteModel:
+                   a :config rewrite settings
+                   b :
+           addHelper
+                  a: config helper settings
+                  b:create helper file
+           
+           
+
+
+
+
+
+
+
+         addBlockFile()
+                createBlockFile()
+                        $blockClass($blockName)
+                        $extendsFrom
+                        $implementFrom
+                       
+               
+         addHelperFile()
+                createHelperFile()
+                      $helperClass($helperName)
+                      $extendsFrom
+                      $implementFrom
+         addModelFile()
+         addControllerFile
+         addEtcFile()
+         addSqlFile()
+       
