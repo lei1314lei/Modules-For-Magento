@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
 <config>
     <modules>
         <Xtwocn_Debug>
@@ -31,15 +38,6 @@
                     </debug_block_observer>
                 </observers>
             </core_block_abstract_to_html_before>
-            <controller_action_postdispatch>
-                <observers>
-                    <dispatch_observer>
-                        <type>model</type>
-                        <class>xtwocndebug/observer</class>
-                        <method>debugAction</method>
-                    </dispatch_observer>
-                </observers>
-            </controller_action_postdispatch>
         </events>
     </global>
     <frontend>
@@ -53,15 +51,38 @@
             </xtwocndebug>
         </routers>
     </frontend>
-    <debug>
-        <logs>
-            <action>
-                <on>0</on>
-                <fileName>debug_action.log</fileName>
-            </action>
-        </logs>
-        <blocks>
-            <hintTemplate>0</hintTemplate>
-        </blocks>
-    </debug>
+    <adminhtml>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <debug translate="title" module="xtwocndebug">
+                                            <title>Debug</title>
+                                            <sort_order>0</sort_order>
+                                        </debug>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+    <crontab>
+        <events>
+            <filter_jobs>
+                <observers>
+                    <debug_observer>
+                        <class>xtwocndebug/observer</class>
+                        <method>filterJobs</method>
+                    </debug_observer>
+                </observers>
+            </filter_jobs>
+        </events>
+    </crontab>
 </config>

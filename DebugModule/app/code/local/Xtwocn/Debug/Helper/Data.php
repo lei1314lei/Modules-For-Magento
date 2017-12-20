@@ -4,12 +4,8 @@ class Xtwocn_Debug_Helper_Data extends Mage_Core_Helper_Abstract{
 
     public function hintTemplate(){
         $request=$this->_getRequest();
-        $doDebug=$request->getParam('debug');
-        if(!$doDebug){
-            $debugCfg=Mage::app()->getConfig()->getNode('debug');
-            $doDebug=(int)$debugCfg->blocks->hintTemplate;
-        }
-        if($doDebug){
+        $params=$request->getParams();
+        if(isset($params['debug'])){
             return true;
         }else{
             return false;

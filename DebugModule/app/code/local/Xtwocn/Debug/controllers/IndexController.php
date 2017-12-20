@@ -1,71 +1,68 @@
 <?php
 
 class Xtwocn_Debug_IndexController extends Mage_Core_Controller_Front_Action{
-
+    
+    public function indexAction(){
+        $categoryId=66;
+        $order='desc';
+        $storeId=2;
+        $write=Mage::getSingleton('core/resource')->getConnection('core_write');
+        $priceTable = Mage::getSingleton('core/resource')->getTableName('catalog_product_index_price');
+      
+            $select = $write->select()->from(array('cat_product' => 'catalog_category_product'))
+                    ->joinLeft(
+                        array('cat_index' => $write->getTableName('catalog_category_product_index')),
+                         "cat_index.product_id=cat_product.product_id and cat_index.category_id=cat_product.category_id and ".$write->quoteInto('cat_index.store_id=?', $storeId),
+                        array('store_id')
+                    )
+                ->join(array('price_index' => $priceTable), "cat_product.product_id = price_index.entity_id",
+                    array("price_index.price", "price_index.final_price"))
+                ->where("cat_product.category_id = $categoryId")
+                ->group("product_id")
+                ->order("(price_index.price<>price_index.final_price) $order");
+        
+        echo $select;
+        echo "<hr>";
+        $catalogInventoryStockItem = Mage::getSingleton('core/resource')->getTableName('cataloginventory_stock_item');
  
-    public function indexAction()
-    {
-        $file='D:\xampp\htdocs\magento\sample\app\code\local\Martin\Autogeneration\etc\components\router.xml';
-        $config=new Varien_Simplexml_Config();
-        $config->loadFile($file);
-        var_dump($config->getNode()->getAttribute('containerType'));
-        $str=$config->getXmlString();
-        $use='a';
-        $module='b';
-        $frontname='c';
-        $autoNodeName="abcd";
-        preg_replace_callback('/:([\w]+)/',function($matches)use($use,$module,$frontname,$autoNodeName,&$str){ 
-            $str=str_replace($matches[0],$$matches[1],$str);    
-        },$str);
-        
-        var_dump($str);
+            $select = $write->select()
+                ->from(array('si' => $catalogInventoryStockItem), '')
+                ->join(
+                    array('cp' => "catalog_category_product"),
+                    "si.product_id = cp.product_id",
+                    array('cp.product_id')
+                )
+                ->join(
+                    array('cat_index' => $write->getTableName('catalog_category_product_index')),
+                     "cat_index.product_id=si.product_id ",
+                    array('store_id')
+                )
+                ->where("cp.category_id = ? AND is_in_stock = 0", $categoryId)
+                ->where("cat_index.store_id=?",$storeId);
+        echo $select;
         exit;
-    }
-    public function testAction(){
-        try{
-            $order=Mage::getModel('sales/order')->load('400000006','increment_id');
-            var_dump($order->debug());
-            $track=array('carrier_code'=>'custom','number'=>'123456');
-            Mage::dispatchEvent("order_update_load_to_shipper_success",array('order'=>$order,'tracks'=>array($track)));
-            
-        } catch (Exception $ex) {
-             var_dump($ex);exit;
-        }
-
-    }
-    
-    public function quoteTestAction(){
-        $checkoutSession=Mage::getSingleton('checkout/session');
-        
-        $checkoutSession->getQuote()->save();
-        var_dump($checkoutSession->getQuote()->debug());exit;
         
         
-        $productCollection=Mage::getModel('catalog/product')->getCollection()
-                ->addCategoryFilter(Mage::getModel('catalog/category')->load(6));
-        $tmp=null;
-        foreach($productCollection as $product){
-            //var_dump($product->debug());
-            if($product->getId()==340){
-                $tmp=$product;
-            }
-        }
         
-        $tmp->setData('status',0);
-        foreach($productCollection as $product){
-            var_dump($product->debug());
-        }
-        exit;
+        
+        $emlTpltFilter=new Mage_Core_Model_Email_Template_Filter();
+        $dataObj=new Varien_Object();
+        $martin=new Varien_Object();
+        $martin->setData('email','547249121@qq.com');
+        $dataObj->setData(array('email-to'=>"martin","person"=>$martin));    
+        $emlTpltFilter->setVariables(array(
+                    'store'=>Mage::app()->getStore(),
+                    'data'=>$dataObj,
+                ));
+        $tpl="{{var store.getFrontendName()}}";
+        
+        $tpl="{{var data.email-to}}";
+        
+        $tpl="{{var data.person.email}}";
+        echo $emlTpltFilter->filter($tpl);exit;
+        echo 'ok';exit;
     }
     
-    
-    public function transferOrderAction(){
-       // $quote=
-    }
-    
-    protected function _transferQuote(Mage_Sales_Model_Quote $quote){
-        $typeOnepage = Mage::getSingleton('checkout/type_onepage');
-    }
     
     public function backtraceAction(){
         $backtrace=  debug_backtrace();
@@ -118,13 +115,56 @@ class Xtwocn_Debug_IndexController extends Mage_Core_Controller_Front_Action{
         echo "<pre>",$str,"</pre>";exit;
     }
     
+    
     public function demoAction(){
+        
+        $write=Mage::getSingleton('core/resource')->getConnection('write');
+                    $select = $write->select()
+                ->from(
+                    array('l' => $write->getTableName('catalog/product_relation')),
+                    'parent_id')
+                ->join(
+                    array('e' => $write->getTableName('catalog/product')),
+                    'e.entity_id = l.parent_id',
+                    array('type_id'))
+                ->where('l.child_id IN(?)', array(1,2,3));
+                    
+        echo $select;exit;
+                    
+        Mage::getResourceModel('catalog/product_indexer_price')->reindexProductIds(418);
+        echo 'demo';
+        exit;
+       var_dump(get_class_methods(Mage::getSingleton('core/resource')),Mage::getSingleton('core/resource')->getConnection()) ;
+       
+      
+      exit;
        $product = Mage::getModel('index/event')->load(306);
        var_dump($product->getDataObject());exit;
+//        $layout=Mage::app()->getLayout();
+//        echo $layout->createBlock("core/template", "shipping")
+//                ->setTemplate('martin/shipping/shippingtablerate.phtml')
+//                ->toHtml();
+
     }
-
-
+    protected $_addedFlag="blockId";
     
+    public function testAction(){
+        var_dump(get_class_methods('Mage_Catalog_Model_Product'));exit;
+        
+        $order=Mage::getModel('sales/order')->load(122);
+        var_dump($order->debug());
+        echo "<hr>";
+        foreach(get_class_methods($order) as $method){
+            var_dump($method);
+        }
+        exit;
+        
+        $customer=Mage::getModel('customer/customer')->load('206793');
+        var_dump($customer->debug(),get_class_methods($customer));
+
+        echo 'ok';
+      
+    }
     public function getDataFromTxt(){
         $path=Mage::app()->getConfig()->getNode('global/auto/cms/datafolder');
         if($path){
@@ -157,57 +197,17 @@ class Xtwocn_Debug_IndexController extends Mage_Core_Controller_Front_Action{
                 ->toHtml();
         
     }
-    public function pageAction(){
-      //  var_dump(Mage::app()->getStore()->getStoreId());exit;
-        $helper=Mage::helper('auto/cms_page');
-        
-        $helper->addNewPages();
-        
-        $helper=Mage::helper('auto/cms_data');
-        $helper->autoAddCMSBlocks();
-        
-        exit;
+    public function catAction(){
+        try{
+            $model=Mage::getModel('catalog/category');
+            $cat=$model->load(125);
 
-        $page=Mage::getModel('cms/page');
-        $data=array(
-            'title'=>'test',
-            'identifier'=>'test',
-            'stores'=>1,
-            'is_active'=>1,
-            'under_version_control'=>0,
-            'content'=>"这是测试内容！！！",
-            'root_template'=>'one_column',
-        );
-       $page->setData($data)->save();
-       var_dump($page->getId());exit;
-    }
-    
-    public function variableAction(){
-        $data=array(
-            'hotline-opening'=>
-            array("code"=>"hotline-opening","name"=>"Hotline Opening","store_id"=>4,"plain_value"=>"周一至周五：8:00 - 18:00 \r\n周六至周日：10:00 - 18:00","html_value"=>"周一至周五：8:00 - 18:00 \r\n周六至周日：10:00 - 18:00"),
-//            'company'=>
-//            array("code"=>"company","name"=>"Company","store_id"=>4,"plain_value"=>"","html_value"=>""),
-//            'chief-executive'=>
-//            array("code"=>"chief-executive","name"=>"Chief Executive","store_id"=>4,"plain_value"=>"","html_value"=>""),
-//            'street'=>
-//            array("code"=>"","name"=>"","store_id"=>4,"plain_value"=>"","html_value"=>""),
-//            'zip'=>
-//            array("code"=>"","name"=>"","store_id"=>4,"plain_value"=>"","html_value"=>""),
-//            'city'=>
-//            array("code"=>"","name"=>"","store_id"=>4,"plain_value"=>"","html_value"=>""),
-            'register-court'=>
-            array("code"=>"register-court","name"=>"Register Court","store_id"=>4,"plain_value"=>"吉森地方法院","html_value"=>"吉森地方法院"),
-//            'register-number'=>
-//            array("code"=>"","name"=>"","store_id"=>4,"plain_value"=>"","html_value"=>""),
-//            'chief-executive'=>
-//            array("code"=>"","name"=>"","store_id"=>4,"plain_value"=>"","html_value"=>""),
-//            'ust-id'=>
-//            array("code"=>"","name"=>"","store_id"=>4,"plain_value"=>"","html_value"=>""),
-        );
-        foreach($data as $item){
-            $obj=Mage::getModel('core/variable')->setData($item)->save();
+            $cat->setData('landing_page',150);
+            $cat->save();
+            var_dump($cat->getData());
+        echo 'ok';exit;
+        }catch(Exception $e){
+            var_dump($e);exit;
         }
     }
-    
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<config>
+    <sections>
+        <debug>
+            <label>Debug</label>
+            <tab>advanced</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>1000</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <cron translate="label">
+                    <label>Cron Job</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <enable_only_whitelist>
+                            <label>Only white list</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>if this is set yes,only jobs in white list can be used to generate job schedules</comment>
+                        </enable_only_whitelist>
+                        <whitelist translate="label comment">
+                            <label>Whitelist of cron job</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>eg:system_backup,catalog_product_index_price_reindex_all</comment>
+                        </whitelist>
+                    </fields>
+                </cron>
+            </groups>
+        </debug>
+    </sections>
+</config>
